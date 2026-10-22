@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciberseguridad Quiz - Banco Atlántico</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #46178f;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Pantallas */
+    .screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* Screen 1: Welcome */
+    .title {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-shadow: 2px 4px 0px rgba(0,0,0,0.3);
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 1.4rem;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: #ffffff;
+      color: #333;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #46178f;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      border-color: #46178f;
+    }
+
+    .btn {
+      background: #1368ce;
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 0 #0c4285;
+      transition: all 0.1s;
+    }
+
+    .btn:hover {
+      background: #1877ec;
+    }
+
+    .btn:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+
+    /* Screen 2: Game Header */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 15px 25px;
+      border-radius: 12px;
+    }
+
+    .question-count {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .score-display {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #ffc200;
+    }
+
+    /* Timer Circle */
+    .timer-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+    }
+
+    .timer-circle {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #864cbf;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: 900;
+      border: 4px solid #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Question Box */
+    .question-box {
+      background: white;
+      color: #222;
+      padding: 25px;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      width: 100%;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .option-btn {
+      border: none;
+      color: white;
+      padding: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      min-height: 90px;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.25);
+      transition: transform 0.1s, opacity 0.2s;
+    }
+
+    .option-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .option-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0,0,0,0.25);
+    }
+
+    .option-btn .shape {
+      font-size: 1.8rem;
+      margin-right: 15px;
+      display: inline-block;
+    }
+
+    .opt-red { background: #e21b3c; }
+    .opt-blue { background: #1368ce; }
+    .opt-yellow { background: #d89e00; }
+    .opt-green { background: #26890c; }
+
+    /* Answer Result Feedback overlay */
+    .feedback-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      color: white;
+    }
+
+    .feedback-screen.correct {
+      background: #26890c;
+    }
+
+    .feedback-screen.incorrect {
+      background: #e21b3c;
+    }
+
+    .feedback-title {
+      font-size: 3.5rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .feedback-points {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Podio Final */
+    .final-card {
+      background: white;
+      color: #333;
+      padding: 40px 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .final-score {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #46178f;
+      margin: 20px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #ffc200;
+      color: #333;
+      font-weight: bold;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      .title {
+        font-size: 2.2rem;
+      }
+      .question-box {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- PANTALLA 1: INICIO DE SESIÓN -->
+    <div id="screen-start" class="screen active">
+      <h1 class="title">Banco Atlántico</h1>
+      <p class="subtitle">Desafío de Ciberseguridad</p>
+      
+      <div class="card">
+        <div class="input-group">
+          <label for="username">Ingresa tu Nombre o Apodo:</label>
+          <input type="text" id="username" placeholder="Ej. Juan Pérez" maxlength="25" autocomplete="off">
+        </div>
+        <button class="btn" onclick="startGame()">¡Comenzar Quiz!</button>
+      </div>
+    </div>
+
+    <!-- PANTALLA 2: JUEGO -->
+    <div id="screen-game" class="screen">
+      <div class="game-header">
+        <div class="question-count" id="question-count">Pregunta 1 de 11</div>
+        <div class="score-display" id="score-display">0 pts</div>
+      </div>
+
+      <div class="timer-container">
+        <div class="timer-circle" id="timer">20</div>
+      </div>
+
+      <div class="question-box" id="question-text">
+        Cargando pregunta...
+      </div>
+
+      <div class="options-grid">
+        <button class="option-btn opt-red" onclick="selectAnswer(0)">
+          <span class="shape">▲</span>
+          <span id="opt0">Opción 1</span>
+        </button>
+        <button class="option-btn opt-blue" onclick="selectAnswer(1)">
+          <span class="shape">◆</span>
+          <span id="opt1">Opción 2</span>
+        </button>
+        <button class="option-btn opt-yellow" onclick="selectAnswer(2)">
+          <span class="shape">●</span>
+          <span id="opt2">Opción 3</span>
+        </button>
+        <button class="option-btn opt-green" onclick="selectAnswer(3)">
+          <span class="shape">■</span>
+          <span id="opt3">Opción 4</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PANTALLA 3: RESULTADOS FINALES -->
+    <div id="screen-end" class="screen">
+      <h1 class="title">¡Juego Terminado!</h1>
+      <p class="subtitle" id="end-player-name">Jugador</p>
+
+      <div class="final-card">
+        <span class="badge">Resultado Final</span>
+        <h2>Tu Puntuación Total:</h2>
+        <div class="final-score" id="final-score">0</div>
+        <p id="final-stats" style="margin-bottom: 25px; color: #666;"></p>
+        <button class="btn" onclick="restartGame()">Volver a Jugar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE FEEDBACK RÁPIDO ENTRE PREGUNTAS -->
+  <div id="feedback-overlay" class="feedback-screen">
+    <div class="feedback-title" id="feedback-title">¡Correcto!</div>
+    <div class="feedback-points" id="feedback-points">+1000 pts</div>
+  </div>
+
+  <script>
+    // PREGUNTAS BASADAS EN LOS TEMAS CLAVE DE LA PRESENTACIÓN
+    const questions = [
+      {
+        question: "¿Cuáles son los 3 pilares fundamentales de la seguridad de la información?",
+        options: [
+          "Confidencialidad, Integridad y Disponibilidad",
+          "Rapidez, Eficiencia y Accesibilidad",
+          "Privacidad, Antivirus y Firewall",
+          "Usuario, Contraseña y Código OTP"
+        ],
+        correct: 0
+      },
+      {
+        question: "Según las máximas de seguridad, ¿cuál es la mejor defensa contra el delito informático?",
+        options: [
+          "Un antivirus muy costoso",
+          "El sentido común para evitarlo",
+          "Cambiar clave todos los días",
+          "Nunca conectarse a Internet"
+        ],
+        correct: 1
+      },
+      {
+        question: "¿Cuál es el principio fundamental que sustenta la Ingeniería Social?",
+        options: [
+          "El software siempre falla",
+          "Las redes WiFi son vulnerables",
+          "Los usuarios son el eslabón más débil",
+          "Los servidores no son seguros"
+        ],
+        correct: 2
+      },
+      {
+        question: "¿Qué caracteriza principalmente a un ataque de Ransomware?",
+        options: [
+          "Muestra publicidad no deseada",
+          "Cifra archivos y exige un rescate económico",
+          "Roba la señal de la red WiFi",
+          "Borra automáticamente los correos"
+        ],
+        correct: 1
+      },
+      {
+        question: "¿Cuál es el objetivo principal del Phishing?",
+        options: [
+          "Infectar la computadora con virus",
+          "Formatear el disco duro",
+          "Engañar para obtener información confidencial",
+          "Llenar la bandeja de spam"
+        ],
+        correct: 2
+      },
+      {
+        question: "¿En qué consiste la técnica conocida como Smishing?",
+        options: [
+          "Ataques mediante correos electrónicos",
+          "Ingeniería social mediante mensajes de texto (SMS)",
+          "Suplantación de identidad por llamadas telefónicas",
+          "Hackeo directo a las torres de telefonía"
+        ],
+        correct: 1
+      },
+      {
+        question: "¿Cómo opera el fraude de SIM Swapping?",
+        options: [
+          "Roba el teléfono físico a la víctima",
+          "Clona la red WiFi del trabajo",
+          "Transfiere el número a una nueva SIM para interceptar códigos",
+          "Instala virus mediante conexión Bluetooth"
+        ],
+        correct: 2
+      },
+      {
+        question: "¿Qué tecnología utilizan los atacantes para crear Deepfakes convincentes?",
+        options: [
+          "Diseño 3D convencional",
+          "Inteligencia Artificial para manipular voz y rostro",
+          "Filtros básicos de redes sociales",
+          "Edición simple de audio analógico"
+        ],
+        correct: 1
+      },
+      {
+        question: "Al utilizar herramientas de IA como ChatGPT o Gemini, ¿qué regla debes seguir?",
+        options: [
+          "Nunca ingresar datos personales ni información confidencial",
+          "Confiar ciegamente en todas sus respuestas",
+          "Compartir claves de acceso corporativas",
+          "Usarlo solo en dispositivos móviles"
+        ],
+        correct: 0
+      },
+      {
+        question: "¿Qué buena práctica debes aplicar en el uso del correo institucional?",
+        options: [
+          "Abrir todos los adjuntos para revisar",
+          "Usar la misma clave del banco para el correo",
+          "Marcar correos sospechosos como Spam y no abrir adjuntos raros",
+          "Responder a correos ofreciendo premios"
+        ],
+        correct: 2
+      },
+      {
+        question: "¿Para qué sirve una herramienta como 'Have I Been Pwned'?",
+        options: [
+          "Para acelerar la velocidad del Internet",
+          "Para verificar si tu correo ha sido filtrado en un ciberataque",
+          "Para recuperar contraseñas olvidadas",
+          "Para bloquear llamadas no deseadas"
+        ],
+        correct: 1
+      }
+    ];
+
+    // ESTADO DEL JUEGO
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let playerName = "";
+    let timeLeft = 20;
+    let timerInterval = null;
+    let canAnswer = false;
+
+    // SONIDOS SINTETIZADOS CON WEB AUDIO API
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+          osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+          osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15); // F3
+          gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'tick') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        }
+      } catch (e) {
+        console.log("Audio no disponible:", e);
+      }
+    }
+
+    // INICIAR JUEGO
+    function startGame() {
+      const input = document.getElementById('username');
+      if (!input.value.trim()) {
+        alert("Por favor ingresa tu nombre para comenzar.");
+        return;
+      }
+      playerName = input.value.trim();
+      score = 0;
+      correctCount = 0;
+      currentQuestionIndex = 0;
+
+      switchScreen('screen-game');
+      loadQuestion();
+    }
+
+    // CAMBIO DE PANTALLA
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    // CARGAR PREGUNTA
+    function loadQuestion() {
+      canAnswer = true;
+      const q = questions[currentQuestionIndex];
+
+      document.getElementById('question-count').innerText = `Pregunta ${currentQuestionIndex + 1} de ${questions.length}`;
+      document.getElementById('score-display').innerText = `${score} pts`;
+      document.getElementById('question-text').innerText = q.question;
+
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`opt${i}`).innerText = q.options[i];
+      }
+
+      startTimer();
+    }
+
+    // CONTADOR DE TIEMPO
+    function startTimer() {
+      timeLeft = 20;
+      document.getElementById('timer').innerText = timeLeft;
+      
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        
+        if (timeLeft <= 5 && timeLeft > 0) {
+          playSound('tick');
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          selectAnswer(-1); // Tiempo agotado
+        }
+      }, 1000);
+    }
+
+    // SELECCIÓN DE RESPUESTA
+    function selectAnswer(selectedIndex) {
+      if (!canAnswer) return;
+      canAnswer = false;
+      clearInterval(timerInterval);
+
+      const q = questions[currentQuestionIndex];
+      const isCorrect = selectedIndex === q.correct;
+      let pointsEarned = 0;
+
+      const overlay = document.getElementById('feedback-overlay');
+      const feedbackTitle = document.getElementById('feedback-title');
+      const feedbackPoints = document.getElementById('feedback-points');
+
+      if (isCorrect) {
+        // Cálculo de puntos tipo Kahoot (hasta 1000 basado en tiempo restante)
+        pointsEarned = Math.round(500 + (timeLeft / 20) * 500);
+        score += pointsEarned;
+        correctCount++;
+        playSound('correct');
+
+        overlay.className = "feedback-screen correct";
+        feedbackTitle.innerText = "¡Correcto!";
+        feedbackPoints.innerText = `+${pointsEarned} pts`;
+      } else {
+        playSound('wrong');
+        overlay.className = "feedback-screen incorrect";
+        feedbackTitle.innerText = selectedIndex === -1 ? "¡Tiempo Agotado!" : "¡Incorrecto!";
+        feedbackPoints.innerText = "+0 pts";
+      }
+
+      overlay.style.display = "flex";
+
+      setTimeout(() => {
+        overlay.style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+          loadQuestion();
+        } else {
+          endGame();
+        }
+      }, 1800);
+    }
+
+    // FINALIZAR JUEGO
+    function endGame() {
+      switchScreen('screen-end');
+      document.getElementById('end-player-name').innerText = `Excelente esfuerzo, ${playerName}`;
+      document.getElementById('final-score').innerText = score;
+      document.getElementById('final-stats').innerText = `Respondiste correctamente ${correctCount} de ${questions.length} preguntas.`;
+    }
+
+    // REINICIAR
+    function restartGame() {
+      switchScreen('screen-start');
+    }
+  </script>
+</body>
+</html>
