@@ -315,7 +315,7 @@
     <!-- PANTALLA 2: JUEGO -->
     <div id="screen-game" class="screen">
       <div class="game-header">
-        <div class="question-count" id="question-count">Pregunta 1 de 11</div>
+        <div class="question-count" id="question-count">Pregunta 1 de 16</div>
         <div class="score-display" id="score-display">0 pts</div>
       </div>
 
@@ -369,8 +369,18 @@
   </div>
 
   <script>
-    // PREGUNTAS BASADAS EN LOS TEMAS CLAVE DE LA PRESENTACIÓN
+    // PREGUNTAS REORGANIZADAS Y CON LAS NUEVAS 5 AGREGADAS (TOTAL 16)
     const questions = [
+      {
+        question: "¿Cuál es la principal motivación de los cibercriminales?",
+        options: [
+          "Difundir un mensaje político o ideológico",
+          "Obtener beneficios económicos y ganancias financieras",
+          "Proteger las redes de infraestructuras críticas",
+          "Realizar pruebas de seguridad autorizadas"
+        ],
+        correct: 1
+      },
       {
         question: "¿Cuáles son los 3 pilares fundamentales de la seguridad de la información?",
         options: [
@@ -382,12 +392,12 @@
         correct: 0
       },
       {
-        question: "Según las máximas de seguridad, ¿cuál es la mejor defensa contra el delito informático?",
+        question: "¿Qué tipo de actor de amenaza actúa en representación de un gobierno o estado-nación para realizar ciberespionaje o sabotaje?",
         options: [
-          "Un antivirus muy costoso",
-          "El sentido común para evitarlo",
-          "Cambiar clave todos los días",
-          "Nunca conectarse a Internet"
+          "Hacktivista",
+          "Cibersoldado (State-sponsored actor)",
+          "Script kiddie",
+          "Insider negligente"
         ],
         correct: 1
       },
@@ -402,12 +412,32 @@
         correct: 2
       },
       {
-        question: "¿Qué caracteriza principalmente a un ataque de Ransomware?",
+        question: "Un empleado intenta abrir un archivo adjunto y sus documentos se cifran, exigiendo un pago en criptomonedas. ¿Qué amenaza es?",
         options: [
-          "Muestra publicidad no deseada",
-          "Cifra archivos y exige un rescate económico",
-          "Roba la señal de la red WiFi",
-          "Borra automáticamente los correos"
+          "Spyware",
+          "Ransomware",
+          "Adware",
+          "Rootkit"
+        ],
+        correct: 1
+      },
+      {
+        question: "Según las máximas de seguridad, ¿cuál es la mejor defensa contra el delito informático?",
+        options: [
+          "Un antivirus muy costoso",
+          "El sentido común para evitarlo",
+          "Cambiar clave todos los días",
+          "Nunca conectarse a Internet"
+        ],
+        correct: 1
+      },
+      {
+        question: "¿En qué consiste la técnica de ingeniería social conocida como Smishing?",
+        options: [
+          "Ataques mediante correos electrónicos",
+          "Ingeniería social realizada a través de mensajes de texto (SMS)",
+          "Suplantación de identidad mediante llamadas telefónicas",
+          "Hackeo directo a las torres de telefonía"
         ],
         correct: 1
       },
@@ -422,12 +452,12 @@
         correct: 2
       },
       {
-        question: "¿En qué consiste la técnica conocida como Smishing?",
+        question: "¿Cuál es la principal diferencia entre Phishing y Spear Phishing?",
         options: [
-          "Ataques mediante correos electrónicos",
-          "Ingeniería social mediante mensajes de texto (SMS)",
-          "Suplantación de identidad por llamadas telefónicas",
-          "Hackeo directo a las torres de telefonía"
+          "El phishing usa llamadas telefónicas y el spear phishing usa SMS",
+          "El phishing es masivo y genérico, mientras que el spear phishing es personalizado y dirigido a un objetivo específico",
+          "El spear phishing solo afecta a dispositivos móviles",
+          "No hay diferencia; son exactamente lo mismo"
         ],
         correct: 1
       },
@@ -462,6 +492,16 @@
         correct: 0
       },
       {
+        question: "¿Qué caracteriza principalmente a un ataque de Ransomware?",
+        options: [
+          "Muestra publicidad no deseada",
+          "Cifra archivos y exige un rescate económico",
+          "Roba la señal de la red WiFi",
+          "Borra automáticamente los correos"
+        ],
+        correct: 1
+      },
+      {
         question: "¿Qué buena práctica debes aplicar en el uso del correo institucional?",
         options: [
           "Abrir todos los adjuntos para revisar",
@@ -480,6 +520,16 @@
           "Para bloquear llamadas no deseadas"
         ],
         correct: 1
+      },
+      {
+        question: "¿Qué técnica de Phishing se realiza específicamente a través de llamadas de voz?",
+        options: [
+          "Vishing",
+          "Smishing",
+          "Whaling",
+          "Baiting"
+        ],
+        correct: 0
       }
     ];
 
